@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using MGSC;
+using ProduceAsReady_Bootstrap;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,15 +12,14 @@ using UnityEngine;
 
 namespace ProduceAsReady
 {
-    public static class Plugin
+    public class Plugin : BootstrapMod
     {
 
         public static ConfigDirectories ConfigDirectories = new ConfigDirectories();
 
         public static Logger Logger = new Logger();
 
-        [Hook(ModHookType.AfterConfigsLoaded)]
-        public static void AfterConfig(IModContext context)
+        public Plugin(HookEvents hookEvents, bool isBeta) : base(hookEvents, isBeta)
         {
             new Harmony("NBKRedSpy_" + ConfigDirectories.ModAssemblyName).PatchAll();
         }
