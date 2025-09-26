@@ -1,0 +1,9 @@
+{
+  "UniqueModName": "NBKRedSpy_ProduceAsReady",
+  "Assemblies": [
+    "ProduceAsReady_Bootstrap.dll"
+  ],
+  "Dependencies": [],
+  "SteamTags": [
+  ]
+}
