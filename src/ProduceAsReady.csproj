@@ -20,9 +20,16 @@
 		<AssemblyVersion>$(VersionPrefix)</AssemblyVersion>
 		<PackageFolder>$(ProjectDir)../package/</PackageFolder>
 	</PropertyGroup>
+
+	<PropertyGroup>
+		<!-- Comment this first line out to use the actual version.-->
+		<Assembly-CSharpPath Condition="Exists('lib-stripped\Assembly-CSharp-publicized.dll')">lib-stripped/Assembly-CSharp-publicized.dll</Assembly-CSharpPath>
+		<Assembly-CSharpPath Condition="!Exists('lib-stripped\Assembly-CSharp-publicized.dll')">$(ManagedPath)Assembly-CSharp.dll</Assembly-CSharpPath>
+	</PropertyGroup>
+
 	<ItemGroup>
 		<Reference Include="Assembly-CSharp" publicize="true">
-			<HintPath>$(ManagedPath)Assembly-CSharp.dll</HintPath>
+			<HintPath>$(Assembly-CSharpPath)</HintPath>
 			<Private>False</Private>
 		</Reference>
 		<Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -48,32 +55,28 @@
 		<PackageReference Include="Newtonsoft.json" Version="13.0.3" ExcludeAssets="runtime" />
 		<PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" ExcludeAssets="runtime" />
 	</ItemGroup>
-
-	<!--Clean out the Steam Workshop folder to prevent artifacts such as references no longer used-->
-	<Target BeforeTargets="PostBuildEvent" Condition="'$(SteamId)'!=''" Name="WorkshopFolderClean">
-		<ItemGroup>
-			<FilesToDelete Include="$(WorkshopPath)*" />
-		</ItemGroup>
-		<Delete Files="@(FilesToDelete)" />
-	</Target>
-
-	<Target Name="ModBaseItems" AfterTargets="PostBuildEvent">
-		<Copy SourceFiles="../modmanifest.json" DestinationFolder="$(TargetDir)" />
-		<Copy SourceFiles="../media/thumbnail.png" DestinationFolder="$(TargetDir)" ContinueOnError="true" />
-	</Target>
-
 	<Target Name="NoSteamIdMessage" Condition="'$(SteamId)'==''" AfterTargets="PostBuildEvent">
 		<Message Importance="high" Text="The SteamId is not set in the project.  Aborting Steam Workshop folder deployment." />
 	</Target>
-		
 	<Target Name="SteamWorkshopDeploy" Condition="'$(SteamId)'!=''" AfterTargets="PostBuildEvent">
+		<PropertyGroup>
+			<VersionWorkshopPath Condition="$(ProjectDir.Contains('beta'))">$(WorkshopPath)beta</VersionWorkshopPath>
+			<VersionWorkshopPath Condition="$(VersionWorkshopPath)==''">$(WorkshopPath)stable</VersionWorkshopPath>
+		</PropertyGroup>
 		<ItemGroup>
-			<BuildSource Include="$(TargetDir)/*.*" />
+			<FilesToDelete Include="$(VersionWorkshopPath)/*" />
+			<Delete Files="@(FilesToDelete)" />
+			<BuildSource Include="$(TargetDir)/*.*" Exclude="$(TargetDir)/*bootstrap.*" />
+			<!-- Exclude workaround for build ignorning private assets for Project References-->
 		</ItemGroup>
-		<MakeDir Directories="$(WorkshopPath)" ContinueOnError="true" />
-		<Copy SourceFiles="@(BuildSource)" DestinationFolder="$(WorkshopPath)" />
-	</Target>
+		<Message Importance="high" Text="ProjectDir folder -&gt; $(ProjectDir)" />
+		<Message Importance="high" Text="Workshop folder: $(VersionWorkshopPath)" />
+		<MakeDir Directories="$(VersionWorkshopPath)" ContinueOnError="true" />
 
+		<Copy SourceFiles="@(BuildSource)" DestinationFolder="$(VersionWorkshopPath)" />
+		<Delete Files="$(VersionWorkshopPath)/*bootstrap.dll" />
+	</Target>
+	
 	<!-- Create the .Zip file release-->
 	<Target Condition="'$(SteamId)'!=''" AfterTargets="PostBuildEvent" Name="PostBuildPackage">
 		<ItemGroup>
@@ -85,6 +88,9 @@
 		<Copy SourceFiles="@(WorkshopSourceFile)" DestinationFolder="$(PackageFolder)$(TargetName)"></Copy>
 		<ZipDirectory SourceDirectory="$(PackageFolder)" DestinationFile="$(PackageFolder)../$(TargetName).zip" Overwrite="true" />
 	</Target>
+	<ItemGroup>
+	  <ProjectReference Include="..\..\bootstrap\src\ProduceAsReady_Bootstrap.csproj" />
+	</ItemGroup>
 	<ItemGroup>
 		<Reference Update="System">
 			<Private>False</Private>
