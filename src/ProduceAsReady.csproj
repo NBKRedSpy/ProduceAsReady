@@ -24,7 +24,7 @@
 	<PropertyGroup>
 		<!-- Comment this first line out to use the actual version.-->
 		<Assembly-CSharpPath Condition="Exists('lib-stripped\Assembly-CSharp-publicized.dll')">lib-stripped/Assembly-CSharp-publicized.dll</Assembly-CSharpPath>
-		<Assembly-CSharpPath Condition="!Exists('lib-stripped\Assembly-CSharp-publicized.dll')">$(ManagedPath)Assembly-CSharp.dll</Assembly-CSharpPath>
+		<Assembly-CSharpPath Condition="'$(Assembly-CSharpPath)'==''">$(ManagedPath)Assembly-CSharp.dll</Assembly-CSharpPath>
 	</PropertyGroup>
 
 	<ItemGroup>

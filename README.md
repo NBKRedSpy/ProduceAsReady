@@ -25,6 +25,9 @@ Source code is available on GitHub at https://github.com/NBKRedSpy/ProduceAsRead
 [Validate icons created by meaicon - Flaticon](https://www.flaticon.com/free-icons/validate)
 [Close icons created by Pixel perfect - Flaticon](https://www.flaticon.com/free-icons/close)
 
-## Change Log
-# 1.1.0
+# Change Log
+## 1.1.1
+* Multiple version support
+
+## 1.1.0
 * 0.9.6 compatibility
