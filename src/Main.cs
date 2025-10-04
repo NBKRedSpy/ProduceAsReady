@@ -1,13 +1,14 @@
-﻿using System;
+﻿using MGSC;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using MGSC;
-using Newtonsoft.Json;
 using UnityEngine;
 
 namespace ProduceAsReady_Bootstrap
@@ -30,7 +31,7 @@ namespace ProduceAsReady_Bootstrap
 
                 BetaConfig config = JsonConvert.DeserializeObject<BetaConfig>(File.ReadAllText(Path.Combine(modPath, "version-info.json")));
 
-                bool isBeta = Application.version.StartsWith(config.BetaVersion);
+                bool isBeta = GetNumericVersion(Application.version) >= GetNumericVersion(config.BetaVersion);
 
                 if (isBeta)
                 {
@@ -77,5 +78,21 @@ namespace ProduceAsReady_Bootstrap
         [Hook(ModHookType.AfterConfigsLoaded)]
         public static void AfterConfigsLoadedCallback(IModContext context) => HookEvents.AfterConfigsLoaded?.Invoke(context);
 
+        private static Version GetNumericVersion(string versionString)
+        {
+            // Only take the numeric parts as build and store version are store specific.
+
+            List<string> numericParts = 
+                versionString.Split('.')
+                .TakeWhile(x => Regex.IsMatch(x, @"^\d+$"))
+                .ToList();
+
+            // Pad with zeros if less than 2 parts (Version requires at least major, minor)
+            while (numericParts.Count < 2) numericParts.Add("0");
+
+            string numericVersion = string.Join(".", numericParts.Take(4).ToArray()); // Version supports up to 4 parts
+
+            return new Version(numericVersion);
+        }
     }
 }
