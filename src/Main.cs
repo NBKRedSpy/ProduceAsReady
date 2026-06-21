@@ -31,26 +31,8 @@ namespace ProduceAsReady_Bootstrap
 
                 BetaConfig config = JsonConvert.DeserializeObject<BetaConfig>(File.ReadAllText(Path.Combine(modPath, "version-info.json")));
 
-                bool isBeta = GetNumericVersion(Application.version) >= GetNumericVersion(config.BetaVersion);
-
-                if (isBeta)
-                {
-                    Log.LogWarning("Beta version detected.");
-                    if (config.DisableBeta)
-                    {
-                        Log.LogError("Beta version is disabled.  Mod is disabled.");
-                        return;
-                    }
-                }
-                else
-                {
-                    if (config.DisableStable)
-                    {
-                        Log.LogError("Stable version is disabled.  Mod is disabled.");
-                        return;
-                    }
-                }
-
+                bool isBeta;
+                if (VersionCheck.DisableModCheck(modPath, out isBeta)) return;
 
                 string modDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
                 Assembly modAssembly = Assembly.LoadFile(Path.Combine(modDir, isBeta ? "beta" : "stable", "ProduceAsReady.dll"));
@@ -78,21 +60,5 @@ namespace ProduceAsReady_Bootstrap
         [Hook(ModHookType.AfterConfigsLoaded)]
         public static void AfterConfigsLoadedCallback(IModContext context) => HookEvents.AfterConfigsLoaded?.Invoke(context);
 
-        private static Version GetNumericVersion(string versionString)
-        {
-            // Only take the numeric parts as build and store version are store specific.
-
-            List<string> numericParts = 
-                versionString.Split('.')
-                .TakeWhile(x => Regex.IsMatch(x, @"^\d+$"))
-                .ToList();
-
-            // Pad with zeros if less than 2 parts (Version requires at least major, minor)
-            while (numericParts.Count < 2) numericParts.Add("0");
-
-            string numericVersion = string.Join(".", numericParts.Take(4).ToArray()); // Version supports up to 4 parts
-
-            return new Version(numericVersion);
-        }
     }
 }
