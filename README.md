@@ -26,6 +26,9 @@ Source code is available on GitHub at https://github.com/NBKRedSpy/ProduceAsRead
 [Close icons created by Pixel perfect - Flaticon](https://www.flaticon.com/free-icons/close)
 
 # Change Log
+## 1.1.2
+* Updated for new achievement support.
+
 ## 1.1.1
 * Multiple version support
 

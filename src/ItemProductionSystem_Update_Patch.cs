@@ -57,6 +57,9 @@ namespace ProduceAsReady
                     continue;
                 }
 
+
+                AchievementProgress.ProcessItemProduced(produceOrder.OrderId);
+
                 // Notify a full order was completed.
                 // This will be incorrect since for long orders it is only the partial amount that was created
                 UI.Staff.NotificationPanel.AddItemProducedNotify(produceOrder.OrderId, produceOrder.Count);

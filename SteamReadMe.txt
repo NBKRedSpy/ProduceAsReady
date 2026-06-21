@@ -30,6 +30,11 @@ Source code is available on GitHub at https://github.com/NBKRedSpy/ProduceAsRead
 
 [h1]Change Log[/h1]
 
+[h2]1.1.2[/h2]
+[list]
+[*]Updated for new achievement support.
+[/list]
+
 [h2]1.1.1[/h2]
 [list]
 [*]Multiple version support

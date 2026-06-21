@@ -2,7 +2,11 @@
 	<PropertyGroup>
 		<TargetFramework>net48</TargetFramework>
 		<OutputType>Library</OutputType>
-		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+		<AssemblyTitle>ProduceAsReady</AssemblyTitle>
+		<Product>ProduceAsReady</Product>
+		<Copyright>Copyright © 2025 NBKRedSpy</Copyright>
+		<AssemblyVersion>1.1.2.0</AssemblyVersion>
 	</PropertyGroup>
 	<PropertyGroup>
 		<!-- Set this value to your mod's Steam Workhop ID -->
@@ -17,7 +21,6 @@
 		<GAME_PATH Condition="!Exists('$(GAME_PATH)')">C:\Program Files (x86)\Steam\steamapps\common\$(GAME_NAME)</GAME_PATH>
 		<WorkshopPath>$(GAME_PATH)\..\..\workshop\content\2059170\$(SteamId)\</WorkshopPath>
 		<ManagedPath>$(GAME_PATH)\$(GAME_NAME)_Data\Managed\</ManagedPath>
-		<AssemblyVersion>$(VersionPrefix)</AssemblyVersion>
 		<PackageFolder>$(ProjectDir)../package/</PackageFolder>
 	</PropertyGroup>
 
@@ -95,5 +98,8 @@
 		<Reference Update="System">
 			<Private>False</Private>
 		</Reference>
+	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Properties\" />
 	</ItemGroup>
 </Project>
